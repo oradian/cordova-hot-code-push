@@ -3,7 +3,14 @@ package com.nordnetab.chcp.main.utils;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.KeyStore;
 import java.util.Map;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.KeyManager;
 
 /**
  * Created by Nikolay Demyankov on 03.06.16.
@@ -27,12 +34,13 @@ public class URLConnectionHelper {
      * @throws IOException when url is invalid or failed to establish connection
      */
     public static URLConnection createConnectionToURL(final String url, final Map<String, String> requestHeaders) throws IOException {
-        KeyStore ks = KeyStore.getInstance("AndroidCAStore");
+        KeyStore trustStore = KeyStore.getInstance("AndroidCAStore");
         trustStore.load(null);
-        trustStore.setCertificateEntry(alias, cert);
+
+        String clientCertPassword = "";
 
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
-        kmf.init(keyStore, clientCertPassword.toCharArray());
+        kmf.init(trustStore, clientCertPassword.toCharArray());
         KeyManager[] keyManagers = kmf.getKeyManagers();
 
         TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
