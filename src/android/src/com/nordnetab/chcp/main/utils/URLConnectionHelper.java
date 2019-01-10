@@ -34,22 +34,26 @@ public class URLConnectionHelper {
      * @throws IOException when url is invalid or failed to establish connection
      */
     public static URLConnection createConnectionToURL(final String url, final Map<String, String> requestHeaders) throws IOException {
-        KeyStore trustStore = KeyStore.getInstance("AndroidCAStore");
-        trustStore.load(null);
-
-        String clientCertPassword = "";
-
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
-        kmf.init(trustStore, clientCertPassword.toCharArray());
-        KeyManager[] keyManagers = kmf.getKeyManagers();
-
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
-        tmf.init(trustStore);
-        TrustManager[] trustManagers = tmf.getTrustManagers();
-
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(keyManagers, trustManagers, null);
-
+        try {
+	    	KeyStore trustStore = KeyStore.getInstance("AndroidCAStore");
+	        trustStore.load(null);
+	
+	        String clientCertPassword = "";
+	
+	        KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+	        kmf.init(trustStore, clientCertPassword.toCharArray());
+	        KeyManager[] keyManagers = kmf.getKeyManagers();
+	
+	        TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+	        tmf.init(trustStore);
+	        TrustManager[] trustManagers = tmf.getTrustManagers();
+	
+	        SSLContext sslContext = SSLContext.getInstance("TLS");
+	        sslContext.init(keyManagers, trustManagers, null);
+        }
+        catch(Exception e) {
+        	System.out.println(e);
+        }
         final URL connectionURL = URLUtility.stringToUrl(url);
         if (connectionURL == null) {
             throw new IOException("Invalid url format: " + url);
